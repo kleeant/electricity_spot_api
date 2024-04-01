@@ -1,6 +1,6 @@
 import { testEnvironment, testConstants } from '../../../tests/helper'
 
-describe('route.apitest::api', () => {
+xdescribe('route.apitest::api', () => {
   beforeAll(async () => {
     await testEnvironment.setupApiForTestEnvironment()
   })

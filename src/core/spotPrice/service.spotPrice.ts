@@ -1,7 +1,7 @@
 import repositoryApitest from '../../infrastructure/database/repositories/repository.apitest'
 import { TApiTest, TCreateApiTest } from '../../lib/types/types'
 
-export class ApiTestService {
+export class SpotPriceService {
   private readonly repository: typeof repositoryApitest
 
   constructor (repository = repositoryApitest) {
