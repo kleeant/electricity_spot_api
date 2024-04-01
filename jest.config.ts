@@ -5,6 +5,6 @@ module.exports = {
   collectCoverageFrom: ['src/**/*.ts', '!**/*.d.ts'],
   testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/dist'],
   testEnvironment: './src/tests/setup/jest.setup.testEnvironment.ts',
-  transformIgnorePatterns: ['node_modules/(?!axios)']
-
+  transformIgnorePatterns: ['node_modules/(?!axios)'],
+  maxWorkers: 4
 }

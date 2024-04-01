@@ -245,14 +245,10 @@ describe('dataSource.entsoe::unit', () => {
   const startDate = new Date('2024-03-24T23:00Z')
   const endDate = new Date('2024-03-25T23:00Z')
   describe('#getDayAheadPrices', () => {
-    it('should return validated data', async () => {
+    it('should return data', async () => {
       const httpRequestServiceMock: IHttpRequestService = { makeHttpRequest: jest.fn().mockResolvedValue(xml) }
       const result = await new DataSourceEntsoe(httpRequestServiceMock).getDayAheadPrices(startDate, endDate)
       expect(result).toBeDefined()
-    })
-    it('should throw if return data is not valid', async () => {
-      const httpRequestServiceMock: IHttpRequestService = { makeHttpRequest: jest.fn().mockResolvedValue('') }
-      await expect(new DataSourceEntsoe(httpRequestServiceMock).getDayAheadPrices(startDate, endDate)).rejects.toThrow()
     })
   })
 })

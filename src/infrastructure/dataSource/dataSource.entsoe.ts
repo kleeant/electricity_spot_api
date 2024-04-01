@@ -1,4 +1,4 @@
-import { EntsoePriceSchema, TEntsoePrice } from '../../lib/schema/entsoePrice.schema'
+import { TEntsoePrice } from '../../lib/schema/entsoePrice.schema'
 import util from '../../lib/util'
 import configDotenv from '../config/config.dotenv'
 import { IDataSourceEntsoe } from '../interface/IDataSourceEntsoe'
@@ -29,7 +29,6 @@ export class DataSourceEntsoe implements IDataSourceEntsoe {
       }
     })
     const data = util.xml.parseXml(result as string) as TEntsoePrice
-    util.schema.validate(data, EntsoePriceSchema)
     return data
   }
 }
