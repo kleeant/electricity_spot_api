@@ -5,3 +5,7 @@ export const getDateAsNumber = (date: Date): number => {
   const res = Number(`${yearMonthDay}${hours}${minutes}`)
   return res
 }
+
+export const firstDateIsNewer = (date: Date, compare: Date): boolean => {
+  return date > compare
+}

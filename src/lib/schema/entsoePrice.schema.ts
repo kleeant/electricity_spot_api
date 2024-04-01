@@ -31,3 +31,4 @@ export const EntsoePriceSchema = Type.Object({
 
 export type TEntsoePeriod = Static<typeof PeriodSchema>
 export type TEntsoePrice = Static<typeof EntsoePriceSchema>
+export type TEntsoeTimeInterval = Static<typeof TimeIntervalSchema>
