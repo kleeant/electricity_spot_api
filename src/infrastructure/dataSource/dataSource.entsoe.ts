@@ -11,7 +11,7 @@ export class DataSourceEntsoe implements IDataSourceEntsoe {
     this.httpService = httpService
   }
 
-  public async getDayAheadPrices (): Promise<TEntsoePrice> {
+  public async getDayAheadPrices (start: Date, end: Date): Promise<TEntsoePrice> {
     const result = await this.httpService.makeHttpRequest({
       url: configDotenv.ENTSOE_API_URL,
       method: 'GET',
@@ -23,8 +23,8 @@ export class DataSourceEntsoe implements IDataSourceEntsoe {
         documentType: 'A44',
         out_Domain: configDotenv.ENTSOE_FIN_DOMAIN,
         in_Domain: configDotenv.ENTSOE_FIN_DOMAIN,
-        periodStart: 202403252200,
-        periodEnd: 202404022200,
+        periodStart: util.date.getDateAsNumber(start),
+        periodEnd: util.date.getDateAsNumber(end),
         securityToken: configDotenv.ENTSOE_API_TOKEN
       }
     })
