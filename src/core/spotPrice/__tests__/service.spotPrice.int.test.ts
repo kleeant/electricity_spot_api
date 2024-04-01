@@ -2,12 +2,12 @@ import { SpotPriceService } from '../service.spotPrice'
 import { mockdata, testEnvironment } from '../../../tests/helper'
 import { IDataSourceEntsoe } from '../../../infrastructure/interface/IDataSourceEntsoe'
 import databaseConnection from '../../../infrastructure/database/database.connection'
-import { TEntsoePrice } from '../../../lib/schema/entsoePrice.schema'
+import { TEntsoePriceResult } from '../../../lib/schema/entsoePrice.schema'
 import repositorySpotPrice from '../../../infrastructure/database/repositories/repository.spotPrice'
 import serviceExternalPriceParser from '../service.externalPriceParser'
 
 describe('service.spotPrice::int', () => {
-  const getEntsoePrice = (): TEntsoePrice => mockdata.getEntsoePrice([
+  const getEntsoePrice = (): TEntsoePriceResult => mockdata.getEntsoePrice([
     { start: '2024-02-24T23:00Z', end: '2024-02-25T23:00Z' }, { start: '2024-02-25T23:00Z', end: '2024-02-26T23:00Z' }
   ])
   let service: SpotPriceService

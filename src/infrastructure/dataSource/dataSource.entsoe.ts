@@ -1,4 +1,4 @@
-import { TEntsoePrice } from '../../lib/schema/entsoePrice.schema'
+import { TEntsoePriceResult } from '../../lib/schema/entsoePrice.schema'
 import util from '../../lib/util'
 import configDotenv from '../config/config.dotenv'
 import { IDataSourceEntsoe } from '../interface/IDataSourceEntsoe'
@@ -11,7 +11,7 @@ export class DataSourceEntsoe implements IDataSourceEntsoe {
     this.httpService = httpService
   }
 
-  public async getDayAheadPrices (start: Date, end: Date): Promise<TEntsoePrice> {
+  public async getDayAheadPrices (start: Date, end: Date): Promise<TEntsoePriceResult> {
     const result = await this.httpService.makeHttpRequest({
       url: configDotenv.ENTSOE_API_URL,
       method: 'GET',
@@ -28,7 +28,7 @@ export class DataSourceEntsoe implements IDataSourceEntsoe {
         securityToken: configDotenv.ENTSOE_API_TOKEN
       }
     })
-    const data = util.xml.parseXml(result as string) as TEntsoePrice
+    const data = util.xml.parseXml(result as string) as TEntsoePriceResult
     return data
   }
 }

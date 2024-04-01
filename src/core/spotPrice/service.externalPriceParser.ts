@@ -1,10 +1,10 @@
 import Decimal from 'decimal.js'
-import { EntsoePriceSchema, TEntsoePeriod, TEntsoePrice } from '../../lib/schema/entsoePrice.schema'
+import { EntsoePriceResultSchema, TEntsoePeriod, TEntsoePriceResult } from '../../lib/schema/entsoePrice.schema'
 import { TCreateSpotPriceDbo } from '../../lib/types/types'
 import util from '../../lib/util'
 class ExternalPriceParserService {
-  validateEntsoePrices (data: TEntsoePrice): void {
-    util.schema.validate(data, EntsoePriceSchema)
+  validateEntsoePrices (data: TEntsoePriceResult): void {
+    util.schema.validate(data, EntsoePriceResultSchema)
   }
 
   /**
@@ -34,7 +34,7 @@ class ExternalPriceParserService {
     return result
   }
 
-  parseSpotPrices (data: TEntsoePrice): TCreateSpotPriceDbo[] {
+  parseSpotPrices (data: TEntsoePriceResult): TCreateSpotPriceDbo[] {
     this.validateEntsoePrices(data)
     const result = data.Publication_MarketDocument.TimeSeries.reduce<TCreateSpotPriceDbo[]>((acc, item) => {
       const period = this.parseEntsoePeriod(item.Period)

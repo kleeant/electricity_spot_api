@@ -1,10 +1,10 @@
 import Decimal from 'decimal.js'
 import serviceExternalPriceParser from '../service.externalPriceParser'
 import { mockdata } from '../../../tests/helper'
-import { TEntsoePrice } from '../../../lib/schema/entsoePrice.schema'
+import { TEntsoePriceResult } from '../../../lib/schema/entsoePrice.schema'
 
 describe('service.externalPriceParser::unit', () => {
-  const getEntsoePrice = (): TEntsoePrice => mockdata.getEntsoePrice([
+  const getEntsoePrice = (): TEntsoePriceResult => mockdata.getEntsoePrice([
     { start: '2024-02-24T23:00Z', end: '2024-02-25T23:00Z' }, { start: '2024-02-25T23:00Z', end: '2024-02-26T23:00Z' }
   ])
 

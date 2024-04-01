@@ -1,4 +1,4 @@
-import { TEntsoePeriod, TEntsoePrice, TEntsoeTimeInterval } from '../../lib/schema/entsoePrice.schema'
+import { TEntsoePeriod, TEntsoePriceResult, TEntsoeTimeInterval } from '../../lib/schema/entsoePrice.schema'
 
 const createPeriod = (timeInterval: TEntsoeTimeInterval): TEntsoePeriod => ({
   resolution: 'PT60M',
@@ -9,7 +9,7 @@ const createPeriod = (timeInterval: TEntsoeTimeInterval): TEntsoePeriod => ({
 })
 
 // get prices for two days
-export const getEntsoePrice = (timeIntervals: TEntsoeTimeInterval[]): TEntsoePrice => {
+export const getEntsoePrice = (timeIntervals: TEntsoeTimeInterval[]): TEntsoePriceResult => {
   return {
     Publication_MarketDocument: {
       TimeSeries: timeIntervals.map(timeInterval => ({

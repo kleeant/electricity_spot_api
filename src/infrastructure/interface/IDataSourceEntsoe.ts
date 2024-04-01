@@ -1,5 +1,5 @@
-import { TEntsoePrice } from '../../lib/schema/entsoePrice.schema'
+import { TEntsoePriceResult } from '../../lib/schema/entsoePrice.schema'
 
 export interface IDataSourceEntsoe {
-  getDayAheadPrices: (from: Date, to: Date) => Promise<TEntsoePrice>
+  getDayAheadPrices: (from: Date, to: Date) => Promise<TEntsoePriceResult>
 }

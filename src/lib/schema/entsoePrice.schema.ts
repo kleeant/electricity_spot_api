@@ -23,12 +23,12 @@ const TimeSeriesSchema = Type.Object({
   Period: PeriodSchema
 })
 
-export const EntsoePriceSchema = Type.Object({
+export const EntsoePriceResultSchema = Type.Object({
   Publication_MarketDocument: Type.Object({
     TimeSeries: Type.Array(TimeSeriesSchema)
   })
 })
 
 export type TEntsoePeriod = Static<typeof PeriodSchema>
-export type TEntsoePrice = Static<typeof EntsoePriceSchema>
+export type TEntsoePriceResult = Static<typeof EntsoePriceResultSchema>
 export type TEntsoeTimeInterval = Static<typeof TimeIntervalSchema>
