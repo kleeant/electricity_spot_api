@@ -1,0 +1,9 @@
+node_modules
+dist
+coverage
+docker-compose.local.yml
+.ci
+.vscode
+.husky
+.git
+.env

@@ -1,0 +1,30 @@
+version: "3.7"
+
+services:
+  postgres-db:
+    command: ["postgres", "-c", "log_statement=all"]
+    hostname: postgres-db
+    container_name: postgres_db
+    image: postgres:14-bullseye
+    restart: always
+    environment:
+      - POSTGRES_HOST=${DB_HOST}
+      - POSTGRES_PORT=5432 ## TODO find out why this does not actually change the default port
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - postgres-db-data:/var/lib/postgres
+    networks:
+      - kleeant_network
+    healthcheck:
+      test: ["CMD", "pg_isready" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+volumes:
+  postgres-db-data:
+
+networks:
+  kleeant_network:

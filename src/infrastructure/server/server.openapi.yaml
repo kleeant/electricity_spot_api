@@ -1,0 +1,273 @@
+openapi: 3.0.3
+info:
+  title: base API
+  description: |-
+    open api specification for base api
+  contact:
+    email: test@gmail.com
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: http://localhost:9000/api/v1
+tags:
+  - name: private
+  - name: test
+
+paths:
+  /healthcheck:
+    get:
+      x-eov-operation-handler: healthcheck/route.healthcheck
+      operationId: getHealthCheck
+      tags:
+        - public
+      description: api healthcheck
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      uptime:
+                        type: string
+                        example: 'ok'
+                      status:
+                        type: string
+                        example: 'ok'
+                      version:
+                        type: string
+                        example: 'ok'
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: 'timestamp'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          description: unexpected internal error occured
+  /test:
+    get:
+      x-eov-operation-handler: apitest/route.apitest
+      operationId: getTest
+      tags:
+        - private
+        - test
+      description: get a test
+      parameters:
+        - $ref: '#/components/parameters/queryUuidNotRequired'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref:  '#/components/schemas/TApiTest'
+                  _paging:
+                    $ref: '#/components/schemas/Pagination'
+        
+        '400':
+          $ref: '#/components/responses/ValidationFailure'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/AuthorizationFailure'
+        '403':
+          $ref: '#/components/responses/AccessForbiddenFailure'
+        '500':
+          description: unexpected internal error occured
+    post:
+      x-eov-operation-handler: apitest/route.apitest
+      operationId: postTest
+      tags:
+        - private
+        - test
+      description: post a new test
+      requestBody:
+        $ref: '#/components/requestBodies/PostTest'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TApiTest'
+        
+        '400':
+          $ref: '#/components/responses/ValidationFailure'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '403':
+          $ref: '#/components/responses/AuthorizationFailure'
+        '500':
+          description: unexpected internal error occured
+
+components:
+  parameters:
+          
+    queryUuidNotRequired:
+      name: ids
+      in: query
+      required: false
+      schema:
+        type: array
+        minLength: 1
+        items:
+          type: string
+          format: uuid
+    
+    pagination_index:
+      name: pagination_index
+      in: query
+      description: which item is the first for the page?
+      required: false
+      schema:
+        $ref: '#/components/schemas/PaginationIndex'
+
+    pagination_limit:
+      name: pagination_limit
+      in: query
+      description: how many per page
+      required: false
+      schema:
+        $ref: '#/components/schemas/PaginationLimit'
+  
+  schemas:
+    PaginationIndex:
+      type: string
+      default: 0
+
+    PaginationLimit:
+      type: string
+      default: 50
+      maximum: 50
+      example: 50
+  
+    Pagination:
+      type: object
+      properties:
+        index:
+          $ref: '#/components/schemas/PaginationIndex'
+        limit:
+          $ref: '#/components/schemas/PaginationLimit'
+        next:
+          type: string
+          nullable: true
+          default: null
+          
+    ErrorList:
+        type: object
+        properties:
+          errors:
+            type: array
+            items:
+              $ref: "#/components/schemas/Error"
+    Error:  
+      type: object
+      properties:
+        description:
+          type: string
+          example: 'Service error occured'
+
+    TApiTest:
+      allOf:
+        - type: object
+          properties:
+            uuid:
+              type: string
+              format: uuid
+              example: 'uuid'
+            created_at:
+              type: string
+              format: date-time
+              example: 'timestamp'
+          required:
+            - uuid
+            - created_at
+        - $ref: '#/components/schemas/TCreateApiTest'
+          
+    TCreateApiTest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: 'name'
+        description:
+          type: string
+          example: 'description'
+      required:
+        - name
+        - description
+
+  requestBodies:
+    PostTest:
+      description: create a new test
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/TCreateApiTest'
+      
+  responses:
+        NotFound:
+          description: API endpoint not found
+          content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/ErrorList'
+                  example:
+                      - errors:
+                          error: "Calling a non existing API endpoint"
+
+        ValidationFailure:
+          description: Request failed with invalid request content
+          content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/ErrorList'
+                  example:
+                      - errors:
+                          error: "item does not exist"
+
+        AccessForbiddenFailure:
+          description: Request failed because of insufficient access rights
+          content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/ErrorList'
+                  example:
+                    - errors:
+                        error: "Invalid token provided"
+
+        AuthorizationFailure:
+          description: Request failed with non valid authentication data provided
+          content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/ErrorList'
+                  example:
+                    - errors:
+                        error: "Invalid token provided"
+                        
+  
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
