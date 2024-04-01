@@ -1,6 +1,6 @@
 import Decimal from 'decimal.js'
 import { TEntsoePrice, TEntsoePeriod } from '../../../lib/schema/entsoePrice.schema'
-import serviceSpotPriceParser from '../service.spotPriceParser'
+import serviceSpotPriceParser from '../service.externalPriceParser'
 
 const getEntsoePrice = (): TEntsoePrice => {
   const Period: TEntsoePeriod = {
@@ -42,7 +42,7 @@ const getEntsoePrice = (): TEntsoePrice => {
   }
 }
 
-describe('service.spotPriceParser::unit', () => {
+describe('service.externalPriceParser::unit', () => {
   describe('#formatPrice', () => {
     it('should format price correctly', () => {
       const europerMwh = 10

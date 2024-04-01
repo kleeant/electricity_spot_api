@@ -2,7 +2,7 @@ import Decimal from 'decimal.js'
 import { EntsoePriceSchema, TEntsoePeriod, TEntsoePrice } from '../../lib/schema/entsoePrice.schema'
 import { TCreateSpotPriceDbo } from '../../lib/types/types'
 import util from '../../lib/util'
-class SpotPriceParserService {
+class ExternalPriceParserService {
   validateEntsoePrices (data: TEntsoePrice): void {
     util.schema.validate(data, EntsoePriceSchema)
   }
@@ -46,4 +46,4 @@ class SpotPriceParserService {
   }
 }
 
-export default new SpotPriceParserService()
+export default new ExternalPriceParserService()
