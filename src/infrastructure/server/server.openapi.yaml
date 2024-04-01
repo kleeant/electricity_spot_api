@@ -60,7 +60,8 @@ paths:
         - test
       description: get a test
       parameters:
-        - $ref: '#/components/parameters/queryUuidNotRequired'
+        - $ref: '#/components/parameters/query_date_from'
+        - $ref: '#/components/parameters/query_date_to'
       responses:
         '200':
           description: Successful operation
@@ -72,7 +73,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref:  '#/components/schemas/TApiTest'
+                      $ref:  '#/components/schemas/TSpotPriceSummary'
                   _paging:
                     $ref: '#/components/schemas/Pagination'
         
@@ -86,16 +87,23 @@ paths:
 components:
   parameters:
           
-    queryUuidNotRequired:
-      name: ids
+    query_date_from:
+      name: date_from
       in: query
-      required: false
+      required: true
       schema:
-        type: array
-        minLength: 1
-        items:
-          type: string
-          format: uuid
+        type: string
+        format: date-time
+        example: 'timestamp'
+
+    query_date_to:
+      name: date_to
+      in: query
+      required: true
+      schema:
+        type: string
+        format: date-time
+        example: 'timestamp'
     
     pagination_index:
       name: pagination_index
@@ -150,36 +158,50 @@ components:
           type: string
           example: 'Service error occured'
 
-    TApiTest:
-      allOf:
-        - type: object
-          properties:
-            uuid:
-              type: string
-              format: uuid
-              example: 'uuid'
-            created_at:
-              type: string
-              format: date-time
-              example: 'timestamp'
-          required:
-            - uuid
-            - created_at
-        - $ref: '#/components/schemas/TCreateApiTest'
-          
-    TCreateApiTest:
+    TSpotPriceMeta:
       type: object
       properties:
-        name:
+        price_unit:
           type: string
-          example: 'name'
-        description:
-          type: string
-          example: 'description'
+          example: 'c/Kwh'
+        tax:
+          type: number
+          example: 25
       required:
-        - name
-        - description
-      
+        - price_unit
+        - tax
+
+    TSpotPrice:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          example: 'timestamp'
+        price:
+          type: string
+          example: '12.16'
+        price_with_tax:
+          type: string
+          example: '15.20'
+      required:
+        - timestamp
+        - price
+        - price_with_tax
+
+    TSpotPriceSummary:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/TSpotPriceMeta'
+        prices: 
+          type: array
+          items:
+            $ref: '#/components/schemas/TSpotPrice'
+      required:
+        - meta
+        - prices
+
   responses:
         NotFound:
           description: API endpoint not found

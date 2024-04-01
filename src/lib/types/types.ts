@@ -10,6 +10,7 @@ export interface TSpotPriceDbo {
   price: Decimal
   timestamp: Date
 }
-export type TCreateApiTest = components['schemas']['TCreateApiTest']
-export type TCreateApiTestDbo = components['schemas']['TCreateApiTest']
+export interface TSpotPriceSummary { prices: TSpotPrice[], meta: TSpotPriceMeta }
+export interface TSpotPrice { price_with_tax: Decimal, price: Decimal, timestamp: Date }
+export type TSpotPriceMeta = components['schemas']['TSpotPriceMeta']
 export type TApiError = components['schemas']['Error']

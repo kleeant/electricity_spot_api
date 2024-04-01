@@ -69,8 +69,14 @@ class DatabaseConnection {
   }
 
   async runQuery (query: string, params: unknown[] | Object = [], db = this.getConnection()): Promise<any> {
-    const result = await db.raw(query, params)
-    return result.rows
+    try {
+      const result = await db.raw(query, params)
+      return result.rows
+    } catch (e) {
+      // without this at least jest just prints an empty error without message or stacktrace
+      loggerService.error(e as Error)
+      throw e
+    }
   }
 
   async insert <T>(table: string, data: any, db = this.getConnection()): Promise<T[]> {

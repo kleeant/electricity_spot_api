@@ -49,4 +49,31 @@ describe('repository.spotPrice::int', () => {
       expect(res).toBeNull()
     })
   })
+
+  describe('#getSpotPrices', () => {
+    it('should return all spot prices between two dates', async () => {
+      const decimal = new Decimal('2.75')
+      const data = [
+        { price: decimal, timestamp: new Date('2024-02-24T21:00:00.000Z') },
+        { price: decimal, timestamp: new Date('2024-02-24T22:00:00.000Z') },
+        { price: decimal, timestamp: new Date('2024-02-24T23:00:00.000Z') }
+      ]
+      await repositorySpotPrice.createSpotPrices(data)
+      const res = await repositorySpotPrice.getSpotPrices(new Date('2024-02-24T21:00:00.000Z'), new Date('2024-02-24T23:00:00.000Z'))
+      expect(res.length).toBe(3)
+    })
+    it('should not return a record if it is outside the date range', async () => {
+      const decimal = new Decimal('2.75')
+      const data = [
+        { price: decimal, timestamp: new Date('2024-02-24T21:00:00.000Z') },
+        { price: decimal, timestamp: new Date('2024-02-24T22:00:00.000Z') },
+        { price: decimal, timestamp: new Date('2024-02-24T23:00:00.000Z') }
+      ]
+      await repositorySpotPrice.createSpotPrices(data)
+      const res = await repositorySpotPrice.getSpotPrices(new Date('2024-02-24T21:00:00.000Z'), new Date('2024-02-24T22:59:00.000Z'))
+      expect(res.length).toBe(2)
+      expect(res[0].timestamp).toEqual(new Date('2024-02-24T21:00:00.000Z'))
+      expect(res[1].timestamp).toEqual(new Date('2024-02-24T22:00:00.000Z'))
+    })
+  })
 })
