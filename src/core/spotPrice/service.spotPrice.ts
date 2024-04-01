@@ -44,14 +44,16 @@ export class SpotPriceService {
   async getSpotPriceSummary (from: Date, to: Date): Promise<TSpotPriceSummary> {
     const prices = await this.repository.getSpotPrices(from, to)
     return {
+      from: from.toISOString(),
+      to: to.toISOString(),
       meta: {
         price_unit: 'c/kWh',
         tax: configDotenv.ELECTRICITY_TAX_FIN
       },
       prices: prices.map(({ price, timestamp }) => ({
-        timestamp,
-        price,
-        price_with_tax: price.mul(new Decimal(`1.${configDotenv.ELECTRICITY_TAX_FIN}`))
+        timestamp: timestamp.toISOString(),
+        price: price.toString(),
+        price_with_tax: price.mul(new Decimal(`1.${configDotenv.ELECTRICITY_TAX_FIN}`)).toString()
       }))
     }
   }

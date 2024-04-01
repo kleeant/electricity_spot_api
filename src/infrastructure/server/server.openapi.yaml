@@ -51,10 +51,10 @@ paths:
           $ref: '#/components/responses/NotFound'
         '500':
           description: unexpected internal error occured
-  /spotPrice:
+  /spot_price:
     get:
       x-eov-operation-handler: spotPrice/route.spotPrice
-      operationId: getTest
+      operationId: getSpotPrices
       tags:
         - private
         - test
@@ -71,9 +71,7 @@ paths:
                 type: object
                 properties:
                   data:
-                    type: array
-                    items:
-                      $ref:  '#/components/schemas/TSpotPriceSummary'
+                    $ref:  '#/components/schemas/TSpotPriceSummary'
                   _paging:
                     $ref: '#/components/schemas/Pagination'
         
@@ -192,6 +190,14 @@ components:
     TSpotPriceSummary:
       type: object
       properties:
+        from: 
+          type: string
+          format: date-time
+          example: 'timestamp'
+        to: 
+          type: string
+          format: date-time
+          example: 'timestamp'
         meta:
           $ref: '#/components/schemas/TSpotPriceMeta'
         prices: 
@@ -201,6 +207,8 @@ components:
       required:
         - meta
         - prices
+        - from
+        - to
 
   responses:
         NotFound:

@@ -8,9 +8,9 @@ export interface paths {
     /** @description api healthcheck */
     get: operations['getHealthCheck']
   }
-  '/spotPrice': {
+  '/spot_price': {
     /** @description get a test */
-    get: operations['getTest']
+    get: operations['getSpotPrices']
   }
 }
 
@@ -56,6 +56,16 @@ export interface components {
       price_with_tax: string
     }
     TSpotPriceSummary: {
+      /**
+       * Format: date-time
+       * @example timestamp
+       */
+      from: string
+      /**
+       * Format: date-time
+       * @example timestamp
+       */
+      to: string
       meta: components['schemas']['TSpotPriceMeta']
       prices: Array<components['schemas']['TSpotPrice']>
     }
@@ -124,7 +134,7 @@ export interface operations {
     }
   }
   /** @description get a test */
-  getTest: {
+  getSpotPrices: {
     parameters: {
       query: {
         date_from: components['parameters']['query_date_from']
@@ -136,7 +146,7 @@ export interface operations {
       200: {
         content: {
           'application/json': {
-            data?: Array<components['schemas']['TSpotPriceSummary']>
+            data?: components['schemas']['TSpotPriceSummary']
             _paging?: components['schemas']['Pagination']
           }
         }
