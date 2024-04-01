@@ -1,7 +1,7 @@
 import Decimal from 'decimal.js'
 import serviceExternalPriceParser from '../service.externalPriceParser'
 import { mockdata } from '../../../tests/helper'
-import { TEntsoePriceResult } from '../../../lib/schema/entsoePrice.schema'
+import { TEntsoePeriod, TEntsoePriceResult } from '../../../lib/schema/entsoePrice.schema'
 
 describe('service.externalPriceParser::unit', () => {
   const getEntsoePrice = (): TEntsoePriceResult => mockdata.getEntsoePrice([
@@ -38,6 +38,42 @@ describe('service.externalPriceParser::unit', () => {
       const result = serviceExternalPriceParser.parseEntsoePeriod(data)
       expect(result[0].timestamp).toEqual(new Date('2024-02-24T23:00:00.000Z'))
       expect(result[1].timestamp).toEqual(new Date('2024-02-25T03:00:00.000Z'))
+    })
+    it('should not have duplicate times', () => {
+      // regression test for a bug that was caused by date class...
+      const data = {
+        timeInterval: { start: '2024-03-30T23:00Z', end: '2024-03-31T22:00Z' },
+        resolution: 'PT60M',
+        Point: [
+          { position: 1, 'price.amount': 42.09 },
+          { position: 2, 'price.amount': 42.02 },
+          { position: 3, 'price.amount': 42.1 },
+          { position: 4, 'price.amount': 43.82 },
+          { position: 5, 'price.amount': 46.19 },
+          { position: 6, 'price.amount': 44.57 },
+          { position: 7, 'price.amount': 48.92 },
+          { position: 8, 'price.amount': 50.04 },
+          { position: 9, 'price.amount': 49.31 },
+          { position: 10, 'price.amount': 42.04 },
+          { position: 11, 'price.amount': 35.37 },
+          { position: 12, 'price.amount': 35.46 },
+          { position: 13, 'price.amount': 33.1 },
+          { position: 14, 'price.amount': 30.68 },
+          { position: 15, 'price.amount': 32.6 },
+          { position: 16, 'price.amount': 41.07 },
+          { position: 17, 'price.amount': 52.66 },
+          { position: 18, 'price.amount': 57.62 },
+          { position: 19, 'price.amount': 58.05 },
+          { position: 20, 'price.amount': 50.83 },
+          { position: 21, 'price.amount': 50.09 },
+          { position: 22, 'price.amount': 46.28 },
+          { position: 23, 'price.amount': 43.98 }
+        ]
+      }
+      const result = serviceExternalPriceParser.parseEntsoePeriod(data as TEntsoePeriod, 1)
+      const times = result.map(r => r.timestamp.getTime())
+      const duplicates = times.filter((item, index) => times.indexOf(item) !== index)
+      expect(duplicates.length).toBe(0)
     })
   })
 

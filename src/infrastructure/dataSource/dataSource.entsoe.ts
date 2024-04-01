@@ -11,6 +11,16 @@ export class DataSourceEntsoe implements IDataSourceEntsoe {
     this.httpService = httpService
   }
 
+  // periods require minutes to always be 00. Othervice the request is not accepted
+  // 2024-02-24T23:25Z -> 202402242300
+  getPeriod (date: Date): Number {
+    const parts = date.toISOString().split('T')
+    const yearMonthDay = parts[0].replaceAll('-', '')
+    const [hours] = parts[1].split(':')
+    const res = Number(`${yearMonthDay}${hours}00`)
+    return res
+  }
+
   public async getDayAheadPrices (start: Date, end: Date): Promise<TEntsoePriceResult> {
     const result = await this.httpService.makeHttpRequest({
       url: configDotenv.ENTSOE_API_URL,
@@ -23,8 +33,8 @@ export class DataSourceEntsoe implements IDataSourceEntsoe {
         documentType: 'A44',
         out_Domain: configDotenv.ENTSOE_FIN_DOMAIN,
         in_Domain: configDotenv.ENTSOE_FIN_DOMAIN,
-        periodStart: util.date.getDateAsNumber(start),
-        periodEnd: util.date.getDateAsNumber(end),
+        periodStart: this.getPeriod(start),
+        periodEnd: this.getPeriod(end),
         securityToken: configDotenv.ENTSOE_API_TOKEN
       }
     })

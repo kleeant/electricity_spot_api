@@ -251,4 +251,24 @@ describe('dataSource.entsoe::unit', () => {
       expect(result).toBeDefined()
     })
   })
+  describe('#getPeriod', () => {
+    it('should return a number that is the sum of year, month, day, and hours', async () => {
+      const date = new Date('2024-10-25T22:00:00.000Z')
+      const result = new DataSourceEntsoe().getPeriod(date)
+      expect(result.toString().length).toBe(12)
+      expect(result).toBe(202410252200)
+    })
+    it('should return a number for single digit months and days and hours', () => {
+      const date = new Date('2024-01-01T01:00:00.000Z')
+      const result = new DataSourceEntsoe().getPeriod(date)
+      expect(result.toString().length).toBe(12)
+      expect(result).toBe(202401010100)
+    })
+    it('minutes should always be 00', () => {
+      const date = new Date('2024-01-01T01:59:00.000Z')
+      const result = new DataSourceEntsoe().getPeriod(date)
+      expect(result.toString().length).toBe(12)
+      expect(result).toBe(202401010100)
+    })
+  })
 })

@@ -2,6 +2,7 @@ import Decimal from 'decimal.js'
 import { EntsoePriceResultSchema, TEntsoePeriod, TEntsoePriceResult } from '../../lib/schema/entsoePrice.schema'
 import { TCreateSpotPriceDbo } from '../../lib/types/types'
 import util from '../../lib/util'
+import datefns from 'date-fns'
 class ExternalPriceParserService {
   validateEntsoePrices (data: TEntsoePriceResult): void {
     util.schema.validate(data, EntsoePriceResultSchema)
@@ -18,17 +19,11 @@ class ExternalPriceParserService {
    * @description - period is an array of items, each item has a price and a position
    * the array can have missing items, so we need to add hours based on position.
    */
-  parseEntsoePeriod (data: TEntsoePeriod): TCreateSpotPriceDbo[] {
-    // in hindsight I should have used date-fns, but in tests we trust
-    const time = new Date(data.timeInterval.start).toISOString()
-    const getDate = (hoursToAdd: number): Date => {
-      const date = new Date(time)
-      return new Date(date.setHours(date.getHours() + hoursToAdd))
-    }
+  parseEntsoePeriod (data: TEntsoePeriod, id?: number): TCreateSpotPriceDbo[] {
     const result = data.Point.map((item, i) => {
       return {
         price: this.formatPrice(item['price.amount']),
-        timestamp: item.position === 1 ? new Date(time) : getDate(item.position - 1)
+        timestamp: item.position === 1 ? new Date(data.timeInterval.start) : datefns.addHours(new Date(data.timeInterval.start), item.position - 1)
       }
     })
     return result
@@ -37,7 +32,7 @@ class ExternalPriceParserService {
   parseSpotPrices (data: TEntsoePriceResult): TCreateSpotPriceDbo[] {
     this.validateEntsoePrices(data)
     const result = data.Publication_MarketDocument.TimeSeries.reduce<TCreateSpotPriceDbo[]>((acc, item) => {
-      const period = this.parseEntsoePeriod(item.Period)
+      const period = this.parseEntsoePeriod(item.Period, (item as any).mRID as number)
       acc.push(...period)
       return acc
     }, [])

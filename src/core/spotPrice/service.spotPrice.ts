@@ -35,6 +35,7 @@ export class SpotPriceService {
     const pricesToSave = dbHasData
       ? parsedPrices.filter(price => util.date.firstDateIsNewer(price.timestamp, latestTimestampInDb.timestamp))
       : parsedPrices
+
     if (pricesToSave.length > 0) {
       await this.repository.createSpotPrices(pricesToSave)
       loggerService.info(`Saved ${pricesToSave.length} new spot prices`)
