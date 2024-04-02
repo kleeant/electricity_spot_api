@@ -13,13 +13,15 @@ describe('service.spotPrice::int', () => {
   ])
   let service: SpotPriceService
   let mock: IDataSourceEntsoe
-  let spy: jest.SpyInstance
+  let removeDaysSpy: jest.SpyInstance
+  let addDaysSpy: jest.SpyInstance
   beforeAll(async () => {
     await testEnvironment.setupDatabaseForTestEnvironment()
     mock = {
       getDayAheadPrices: jest.fn().mockResolvedValue(getEntsoePrice())
     }
-    spy = jest.spyOn(util.date, 'removeDays')
+    removeDaysSpy = jest.spyOn(util.date, 'removeDays')
+    addDaysSpy = jest.spyOn(util.date, 'addDays')
     service = new SpotPriceService(mock, repositorySpotPrice, serviceExternalPriceParser)
   })
   afterAll(async () => {
@@ -53,7 +55,11 @@ describe('service.spotPrice::int', () => {
     })
     it('should call entsoe API with a date 7 days ago if there is no data in the db', async () => {
       await service.updatePrices()
-      expect(spy).toHaveBeenCalledWith(7, expect.any(Date))
+      expect(removeDaysSpy).toHaveBeenCalledWith(7, expect.any(Date))
+    })
+    it('should call entsoe API with tomorrows date', async () => {
+      await service.updatePrices()
+      expect(addDaysSpy).toHaveBeenCalledWith(1, expect.any(Date))
     })
     it('should not save prices that are already in the db', async () => {
       const dbTimestamp = new Date('2024-02-25T01:00Z') // removed two hours

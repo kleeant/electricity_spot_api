@@ -1,4 +1,5 @@
-import { TEntsoePriceResult } from '../../lib/schema/entsoePrice.schema'
+import loggerService from '../../lib/logger'
+import { EntsoePriceResultSchema, TEntsoePriceResult } from '../../lib/schema/entsoePrice.schema'
 import util from '../../lib/util'
 import configDotenv from '../config/config.dotenv'
 import { IDataSourceEntsoe } from '../interface/IDataSourceEntsoe'
@@ -38,7 +39,12 @@ export class DataSourceEntsoe implements IDataSourceEntsoe {
         securityToken: configDotenv.ENTSOE_API_TOKEN
       }
     })
+    loggerService.info(`fetched data from entsoe for timeline [${start.toISOString()}] - [${end.toISOString()}]`)
     const data = util.xml.parseXml(result as string) as TEntsoePriceResult
+    if (!Array.isArray(data.Publication_MarketDocument.TimeSeries)) {
+      data.Publication_MarketDocument.TimeSeries = [data.Publication_MarketDocument.TimeSeries]
+    }
+    util.schema.validate(data, EntsoePriceResultSchema)
     return data
   }
 }

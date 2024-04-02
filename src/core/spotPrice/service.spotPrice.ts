@@ -23,11 +23,11 @@ export class SpotPriceService {
 
   async updatePrices (): Promise<void> {
     const latestTimestampInDb = await this.repository.getLatestTimeStamp()
-    const dbHasData = latestTimestampInDb != null
+    const dbHasData = latestTimestampInDb !== null
     const latestTimestamp = dbHasData
       ? latestTimestampInDb.timestamp
       : util.date.removeDays(7, new Date())
-    const tomorrow = util.date.addDays(1, latestTimestamp)
+    const tomorrow = util.date.addDays(1, new Date())
 
     const externalResult = await this.dataSource.getDayAheadPrices(latestTimestamp, tomorrow)
     const parsedPrices = this.serviceExternalPriceParser.parseSpotPrices(externalResult)
