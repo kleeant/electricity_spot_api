@@ -2,7 +2,6 @@ import Decimal from 'decimal.js'
 import { EntsoePriceResultSchema, TEntsoePeriod, TEntsoePriceResult } from '../../lib/schema/entsoePrice.schema'
 import { TCreateSpotPriceDbo } from '../../lib/types/types'
 import util from '../../lib/util'
-import datefns from 'date-fns'
 class ExternalPriceParserService {
   validateEntsoePrices (data: TEntsoePriceResult): void {
     util.schema.validate(data, EntsoePriceResultSchema)
@@ -23,7 +22,7 @@ class ExternalPriceParserService {
     const result = data.Point.map((item, i) => {
       return {
         price: this.formatPrice(item['price.amount']),
-        timestamp: item.position === 1 ? new Date(data.timeInterval.start) : datefns.addHours(new Date(data.timeInterval.start), item.position - 1)
+        timestamp: item.position === 1 ? new Date(data.timeInterval.start) : util.date.addHours(item.position - 1, new Date(data.timeInterval.start))
       }
     })
     return result

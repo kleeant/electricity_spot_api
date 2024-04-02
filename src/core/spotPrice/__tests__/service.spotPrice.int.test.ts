@@ -5,6 +5,7 @@ import databaseConnection from '../../../infrastructure/database/database.connec
 import { TEntsoePriceResult } from '../../../lib/schema/entsoePrice.schema'
 import repositorySpotPrice from '../../../infrastructure/database/repositories/repository.spotPrice'
 import serviceExternalPriceParser from '../service.externalPriceParser'
+import util from '../../../lib/util'
 
 describe('service.spotPrice::int', () => {
   const getEntsoePrice = (): TEntsoePriceResult => mockdata.getEntsoePrice([
@@ -12,11 +13,13 @@ describe('service.spotPrice::int', () => {
   ])
   let service: SpotPriceService
   let mock: IDataSourceEntsoe
+  let spy: jest.SpyInstance
   beforeAll(async () => {
     await testEnvironment.setupDatabaseForTestEnvironment()
     mock = {
       getDayAheadPrices: jest.fn().mockResolvedValue(getEntsoePrice())
     }
+    spy = jest.spyOn(util.date, 'removeDays')
     service = new SpotPriceService(mock, repositorySpotPrice, serviceExternalPriceParser)
   })
   afterAll(async () => {
@@ -50,8 +53,7 @@ describe('service.spotPrice::int', () => {
     })
     it('should call entsoe API with a date 7 days ago if there is no data in the db', async () => {
       await service.updatePrices()
-      // setting the date causes issues with the date matcher
-      expect(mock.getDayAheadPrices).toHaveBeenCalledWith(expect.any(Date), expect.any(Date))
+      expect(spy).toHaveBeenCalledWith(7, expect.any(Date))
     })
     it('should not save prices that are already in the db', async () => {
       const dbTimestamp = new Date('2024-02-25T01:00Z') // removed two hours

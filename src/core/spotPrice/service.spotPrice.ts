@@ -26,9 +26,8 @@ export class SpotPriceService {
     const dbHasData = latestTimestampInDb != null
     const latestTimestamp = dbHasData
       ? latestTimestampInDb.timestamp
-      : new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) // now in milliseconds minus 7 days
-    const tomorrow = new Date()
-    tomorrow.setUTCDate(tomorrow.getUTCDate() + 1)
+      : util.date.removeDays(7, new Date())
+    const tomorrow = util.date.addDays(1, latestTimestamp)
 
     const externalResult = await this.dataSource.getDayAheadPrices(latestTimestamp, tomorrow)
     const parsedPrices = this.serviceExternalPriceParser.parseSpotPrices(externalResult)
