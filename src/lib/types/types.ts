@@ -12,5 +12,5 @@ export interface TSpotPriceDbo {
 }
 export type TSpotPriceSummary = components['schemas']['TSpotPriceSummary']
 export type TSpotPrice = components['schemas']['TSpotPrice']
-export type TSpotPriceMeta = components['schemas']['TSpotPriceMeta']
+export type TSpotPriceSummaryMeta = components['schemas']['TSpotPriceSummaryMeta']
 export type TApiError = components['schemas']['Error']

@@ -16,6 +16,7 @@ interface Config {
   ENTSOE_API_URL: string
   ENTSOE_FIN_DOMAIN: string
   ELECTRICITY_TAX_FIN: number
+  PRICE_ROUNDING_DECIMALS: number
   AXIOS_ENABLE_CURLS: boolean
 }
 
@@ -32,6 +33,7 @@ const makeData = (): Config => {
     ENTSOE_API_URL: process.env.ENTSOE_API_URL || null,
     ENTSOE_FIN_DOMAIN: process.env.ENTSOE_FIN_DOMAIN || null,
     ELECTRICITY_TAX_FIN: Number(process.env.ELECTRICITY_TAX_FIN) || 24,
+    PRICE_ROUNDING_DECIMALS: Number(process.env.PRICE_ROUNDING_DECIMALS) || 2,
     API_PORT: process.env.API_PORT === undefined ? null : parseInt(process.env.API_PORT)
   }
 

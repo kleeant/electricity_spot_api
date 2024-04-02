@@ -154,7 +154,7 @@ components:
           type: string
           example: 'Service error occured'
 
-    TSpotPriceMeta:
+    TSpotPriceSummaryMeta:
       type: object
       properties:
         price_unit:
@@ -163,9 +163,17 @@ components:
         tax:
           type: number
           example: 25
+        highest_price_in_request_range:
+          type: string
+          example: '12.16'
+        lowest_price_in_request_range:
+          type: string
+          example: '12.16'
       required:
         - price_unit
         - tax
+        - highest_price_in_request_range
+        - lowest_price_in_request_range
 
     TSpotPrice:
       type: object
@@ -197,7 +205,7 @@ components:
           format: date-time
           example: 'timestamp'
         meta:
-          $ref: '#/components/schemas/TSpotPriceMeta'
+          $ref: '#/components/schemas/TSpotPriceSummaryMeta'
         prices: 
           type: array
           items:
@@ -228,9 +236,3 @@ components:
                   example:
                       - errors:
                           error: "item does not exist"                        
-  
-  securitySchemes:
-    bearerAuth:            # arbitrary name for the security scheme
-      type: http
-      scheme: bearer
-      bearerFormat: JWT

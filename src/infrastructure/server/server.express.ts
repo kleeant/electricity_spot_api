@@ -13,6 +13,7 @@ import configDotenv from '../../infrastructure/config/config.dotenv'
 import loggerService from '../../lib/logger'
 import util from '../../lib/util'
 import { TApiError } from '../../lib/types/types'
+import cors from 'cors'
 /*
 const jwtCheck = expressjwt({
   secret: JwksRsa.expressJwtSecret({
@@ -37,7 +38,15 @@ export default (): Express => {
   /**
    *  App Configuration
    */
-
+  // Log all requests using logger
+  app.use((req, res, next) => {
+    loggerService.info('REQUEST', {
+      method: req.method,
+      url: req.url,
+      statusCode: res.statusCode
+    })
+    next()
+  })
   /* helmet is interfering with swagger ui log in process.
   app.use(helmet({
     contentSecurityPolicy: {
@@ -50,13 +59,16 @@ export default (): Express => {
     }
   }))
   */
-  // app.use(cors())
+  app.use(cors({ origin: '*' }))
   app.use(express.raw({ limit: '50mb' }))
   app.use(express.json({ limit: '50mb' }))
   app.use(express.urlencoded({ extended: true, limit: '50mb' }))
   // parse various different custom JSON types as JSON
   if (configDotenv.NODE_ENV !== 'production') {
-    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiSpec, { explorer: true }))
+    app.use('/openapi/ui/', swaggerUi.serve, swaggerUi.setup(apiSpec, { explorer: true }))
+    app.get('/openapi.json', (req, res) => {
+      res.status(200).json(apiSpec)
+    })
   }
 
   // app.use(jwtCheck)

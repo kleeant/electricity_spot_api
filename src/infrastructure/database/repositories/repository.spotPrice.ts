@@ -1,7 +1,7 @@
 import Decimal from 'decimal.js'
 import { TSpotPriceDbo, TCreateSpotPriceDbo } from '../../../lib/types/types'
 import databaseConnection from '../database.connection'
-import { getSpotPrices } from '../queries/queries.spotPrice'
+import { getSpotPrices, getHighestAndLowestPriceInRange } from '../queries/queries.spotPrice'
 class SpotPriceRepository {
   private readonly tableName = 'spot_price'
 
@@ -15,6 +15,14 @@ class SpotPriceRepository {
   async getSpotPrices (from: Date, to: Date): Promise<TSpotPriceDbo[]> {
     const result = await databaseConnection.runQuery(getSpotPrices, { from, to })
     return (result as Array<{ price: string }>).map(row => ({ ...row, price: new Decimal(row.price) })) as TSpotPriceDbo[] // TODO move decimal cast to db driver layer
+  }
+
+  async getHighestAndLowestPriceInRange (from: Date, to: Date): Promise<{ highest_price_in_range: Decimal, lowest_price_in_range: Decimal }> {
+    const result = await databaseConnection.runQuery(getHighestAndLowestPriceInRange, { from, to })
+    return {
+      highest_price_in_range: new Decimal(result[0].highest_price_in_range),
+      lowest_price_in_range: new Decimal(result[0].lowest_price_in_range)
+    }
   }
 
   async createSpotPrices (data: TCreateSpotPriceDbo[]): Promise<TSpotPriceDbo[]> {

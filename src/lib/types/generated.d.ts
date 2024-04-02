@@ -38,11 +38,15 @@ export interface components {
       /** @example Service error occured */
       description?: string
     }
-    TSpotPriceMeta: {
+    TSpotPriceSummaryMeta: {
       /** @example c/Kwh */
       price_unit: string
       /** @example 25 */
       tax: number
+      /** @example 12.16 */
+      highest_price_in_request_range: string
+      /** @example 12.16 */
+      lowest_price_in_request_range: string
     }
     TSpotPrice: {
       /**
@@ -66,7 +70,7 @@ export interface components {
        * @example timestamp
        */
       to: string
-      meta: components['schemas']['TSpotPriceMeta']
+      meta: components['schemas']['TSpotPriceSummaryMeta']
       prices: Array<components['schemas']['TSpotPrice']>
     }
   }

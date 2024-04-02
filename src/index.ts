@@ -7,7 +7,7 @@ const run = async (): Promise<void> => {
   const app = server()
   app.listen(config.API_PORT, () => {
     loggerService.info(`API listening on port ${config.API_PORT}`)
-    loggerService.info(`API docs at http://localhost:${config.API_PORT}/api-docs`)
+    loggerService.info(`API docs at http://localhost:${config.API_PORT}/openapi/ui/`)
   })
 }
 

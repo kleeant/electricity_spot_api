@@ -17,10 +17,14 @@ class TestEnvironment {
   }
 
   getApi (): TestAgent {
-    if (this.api == null) {
+    if (this.api === undefined) {
       this.api = supertest(serverExpress())
     }
     return this.api
+  }
+
+  resetApi (): void {
+    this.api = undefined
   }
 
   async setupApiForTestEnvironment (): Promise<void> {

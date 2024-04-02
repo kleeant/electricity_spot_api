@@ -89,4 +89,26 @@ describe('repository.spotPrice::int', () => {
       expect(res[2].timestamp).toEqual(new Date('2024-02-24T23:00:00.000Z'))
     })
   })
+  describe('#getHighestAndLowestPriceInRange', () => {
+    it('should return the highest price in time range', async () => {
+      const data = [
+        { price: new Decimal('1'), timestamp: new Date('2024-02-24T21:00:00.000Z') },
+        { price: new Decimal('2'), timestamp: new Date('2024-02-24T22:00:00.000Z') },
+        { price: new Decimal('3'), timestamp: new Date('2024-02-24T23:00:00.000Z') }
+      ]
+      await repositorySpotPrice.createSpotPrices(data)
+      const res = await repositorySpotPrice.getHighestAndLowestPriceInRange(new Date('2024-02-24T21:00:00.000Z'), new Date('2024-02-24T22:00:00.000Z'))
+      expect(res.highest_price_in_range).toStrictEqual(new Decimal(2))
+    })
+    it('should return the lowest price in time range', async () => {
+      const data = [
+        { price: new Decimal('1'), timestamp: new Date('2024-02-24T21:00:00.000Z') },
+        { price: new Decimal('2'), timestamp: new Date('2024-02-24T22:00:00.000Z') },
+        { price: new Decimal('3'), timestamp: new Date('2024-02-24T23:00:00.000Z') }
+      ]
+      await repositorySpotPrice.createSpotPrices(data)
+      const res = await repositorySpotPrice.getHighestAndLowestPriceInRange(new Date('2024-02-24T21:00:01.000Z'), new Date('2024-02-24T23:00:00.000Z'))
+      expect(res.lowest_price_in_range).toStrictEqual(new Decimal(2))
+    })
+  })
 })

@@ -43,17 +43,21 @@ export class SpotPriceService {
 
   async getSpotPriceSummary (from: Date, to: Date): Promise<TSpotPriceSummary> {
     const prices = await this.repository.getSpotPrices(from, to)
+    const highestAndLowest = await this.repository.getHighestAndLowestPriceInRange(from, to)
+
     return {
       from: from.toISOString(),
       to: to.toISOString(),
       meta: {
         price_unit: 'c/kWh',
-        tax: configDotenv.ELECTRICITY_TAX_FIN
+        tax: configDotenv.ELECTRICITY_TAX_FIN,
+        highest_price_in_request_range: highestAndLowest.highest_price_in_range.toFixed(configDotenv.PRICE_ROUNDING_DECIMALS).toString(),
+        lowest_price_in_request_range: highestAndLowest.lowest_price_in_range.toFixed(configDotenv.PRICE_ROUNDING_DECIMALS).toString()
       },
       prices: prices.map(({ price, timestamp }) => ({
         timestamp: timestamp.toISOString(),
-        price: price.toString(),
-        price_with_tax: price.mul(new Decimal(`1.${configDotenv.ELECTRICITY_TAX_FIN}`)).toString()
+        price: price.toFixed(configDotenv.PRICE_ROUNDING_DECIMALS).toString(),
+        price_with_tax: price.mul(new Decimal(`1.${configDotenv.ELECTRICITY_TAX_FIN}`)).toFixed(configDotenv.PRICE_ROUNDING_DECIMALS).toString()
       }))
     }
   }
