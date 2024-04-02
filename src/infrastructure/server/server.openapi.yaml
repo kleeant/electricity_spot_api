@@ -12,8 +12,7 @@ externalDocs:
 servers:
   - url: http://localhost:9000/api/v1
 tags:
-  - name: private
-  - name: test
+  - name: spot_price
 
 paths:
   /healthcheck:
@@ -56,8 +55,7 @@ paths:
       x-eov-operation-handler: spotPrice/route.spotPrice
       operationId: getSpotPrices
       tags:
-        - private
-        - test
+        - spot_price
       description: get a test
       parameters:
         - $ref: '#/components/parameters/query_date_from'
@@ -92,7 +90,7 @@ components:
       schema:
         type: string
         format: date-time
-        example: 'timestamp'
+        example: '2024-03-01T08:09:22.146Z'
 
     query_date_to:
       name: date_to
@@ -101,7 +99,7 @@ components:
       schema:
         type: string
         format: date-time
-        example: 'timestamp'
+        example: '2024-05-29T08:09:22.146Z'
     
     pagination_index:
       name: pagination_index
