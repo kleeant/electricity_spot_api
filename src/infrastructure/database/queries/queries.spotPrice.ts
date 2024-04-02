@@ -3,5 +3,6 @@ export const getSpotPrices = `
   FROM   spot_price
   WHERE  timestamp >= :from
   AND    timestamp <= :to
+  ORDER BY timestamp 
   ;
 `

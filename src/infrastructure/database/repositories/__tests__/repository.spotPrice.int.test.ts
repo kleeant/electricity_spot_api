@@ -75,5 +75,18 @@ describe('repository.spotPrice::int', () => {
       expect(res[0].timestamp).toEqual(new Date('2024-02-24T21:00:00.000Z'))
       expect(res[1].timestamp).toEqual(new Date('2024-02-24T22:00:00.000Z'))
     })
+    it('should return prices in order of date', async () => {
+      const decimal = new Decimal('2.75')
+      const data = [
+        { price: decimal, timestamp: new Date('2024-02-24T22:00:00.000Z') },
+        { price: decimal, timestamp: new Date('2024-02-24T21:00:00.000Z') },
+        { price: decimal, timestamp: new Date('2024-02-24T23:00:00.000Z') }
+      ]
+      await repositorySpotPrice.createSpotPrices(data)
+      const res = await repositorySpotPrice.getSpotPrices(new Date('2024-02-24T21:00:00.000Z'), new Date('2024-02-24T23:00:00.000Z'))
+      expect(res[0].timestamp).toEqual(new Date('2024-02-24T21:00:00.000Z'))
+      expect(res[1].timestamp).toEqual(new Date('2024-02-24T22:00:00.000Z'))
+      expect(res[2].timestamp).toEqual(new Date('2024-02-24T23:00:00.000Z'))
+    })
   })
 })
