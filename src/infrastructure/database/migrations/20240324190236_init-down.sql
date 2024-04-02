@@ -1,1 +1,1 @@
-drop table api_test;
+drop table spot_price;

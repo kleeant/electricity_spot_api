@@ -8,11 +8,9 @@ export interface paths {
     /** @description api healthcheck */
     get: operations['getHealthCheck']
   }
-  '/test': {
+  '/spot_price': {
     /** @description get a test */
-    get: operations['getTest']
-    /** @description post a new test */
-    post: operations['postTest']
+    get: operations['getSpotPrices']
   }
 }
 
@@ -40,23 +38,36 @@ export interface components {
       /** @example Service error occured */
       description?: string
     }
-    TApiTest: {
-      /**
-       * Format: uuid
-       * @example uuid
-       */
-      uuid: string
+    TSpotPriceMeta: {
+      /** @example c/Kwh */
+      price_unit: string
+      /** @example 25 */
+      tax: number
+    }
+    TSpotPrice: {
       /**
        * Format: date-time
        * @example timestamp
        */
-      created_at: string
-    } & components['schemas']['TCreateApiTest']
-    TCreateApiTest: {
-      /** @example name */
-      name: string
-      /** @example description */
-      description: string
+      timestamp: string
+      /** @example 12.16 */
+      price: string
+      /** @example 15.20 */
+      price_with_tax: string
+    }
+    TSpotPriceSummary: {
+      /**
+       * Format: date-time
+       * @example timestamp
+       */
+      from: string
+      /**
+       * Format: date-time
+       * @example timestamp
+       */
+      to: string
+      meta: components['schemas']['TSpotPriceMeta']
+      prices: Array<components['schemas']['TSpotPrice']>
     }
   }
   responses: {
@@ -72,34 +83,16 @@ export interface components {
         'application/json': components['schemas']['ErrorList']
       }
     }
-    /** @description Request failed because of insufficient access rights */
-    AccessForbiddenFailure: {
-      content: {
-        'application/json': components['schemas']['ErrorList']
-      }
-    }
-    /** @description Request failed with non valid authentication data provided */
-    AuthorizationFailure: {
-      content: {
-        'application/json': components['schemas']['ErrorList']
-      }
-    }
   }
   parameters: {
-    queryUuidNotRequired?: string[]
+    query_date_from: string
+    query_date_to: string
     /** @description which item is the first for the page? */
     pagination_index?: components['schemas']['PaginationIndex']
     /** @description how many per page */
     pagination_limit?: components['schemas']['PaginationLimit']
   }
-  requestBodies: {
-    /** @description create a new test */
-    PostTest?: {
-      content: {
-        'application/json': Array<components['schemas']['TCreateApiTest']>
-      }
-    }
-  }
+  requestBodies: never
   headers: never
   pathItems: never
 }
@@ -141,10 +134,11 @@ export interface operations {
     }
   }
   /** @description get a test */
-  getTest: {
+  getSpotPrices: {
     parameters: {
-      query?: {
-        ids?: components['parameters']['queryUuidNotRequired']
+      query: {
+        date_from: components['parameters']['query_date_from']
+        date_to: components['parameters']['query_date_to']
       }
     }
     responses: {
@@ -152,35 +146,12 @@ export interface operations {
       200: {
         content: {
           'application/json': {
-            data?: Array<components['schemas']['TApiTest']>
+            data?: components['schemas']['TSpotPriceSummary']
             _paging?: components['schemas']['Pagination']
           }
         }
       }
       400: components['responses']['ValidationFailure']
-      401: components['responses']['AuthorizationFailure']
-      403: components['responses']['AccessForbiddenFailure']
-      404: components['responses']['NotFound']
-      /** @description unexpected internal error occured */
-      500: {
-        content: never
-      }
-    }
-  }
-  /** @description post a new test */
-  postTest: {
-    requestBody: components['requestBodies']['PostTest']
-    responses: {
-      /** @description Successful operation */
-      200: {
-        content: {
-          'application/json': {
-            data?: Array<components['schemas']['TApiTest']>
-          }
-        }
-      }
-      400: components['responses']['ValidationFailure']
-      403: components['responses']['AuthorizationFailure']
       404: components['responses']['NotFound']
       /** @description unexpected internal error occured */
       500: {

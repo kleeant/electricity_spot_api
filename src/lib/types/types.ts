@@ -1,7 +1,16 @@
 import { components } from './generated'
+import Decimal from 'decimal.js'
 
-export type TApiTestDbo = components['schemas']['TApiTest'] & { id: number }
-export type TApiTest = components['schemas']['TApiTest']
-export type TCreateApiTest = components['schemas']['TCreateApiTest']
-export type TCreateApiTestDbo = components['schemas']['TCreateApiTest']
+export interface TCreateSpotPriceDbo {
+  price: Decimal
+  timestamp: Date
+}
+export interface TSpotPriceDbo {
+  id: number
+  price: Decimal
+  timestamp: Date
+}
+export type TSpotPriceSummary = components['schemas']['TSpotPriceSummary']
+export type TSpotPrice = components['schemas']['TSpotPrice']
+export type TSpotPriceMeta = components['schemas']['TSpotPriceMeta']
 export type TApiError = components['schemas']['Error']

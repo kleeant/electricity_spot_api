@@ -12,8 +12,7 @@ externalDocs:
 servers:
   - url: http://localhost:9000/api/v1
 tags:
-  - name: private
-  - name: test
+  - name: spot_price
 
 paths:
   /healthcheck:
@@ -51,16 +50,16 @@ paths:
           $ref: '#/components/responses/NotFound'
         '500':
           description: unexpected internal error occured
-  /test:
+  /spot_price:
     get:
-      x-eov-operation-handler: apitest/route.apitest
-      operationId: getTest
+      x-eov-operation-handler: spotPrice/route.spotPrice
+      operationId: getSpotPrices
       tags:
-        - private
-        - test
+        - spot_price
       description: get a test
       parameters:
-        - $ref: '#/components/parameters/queryUuidNotRequired'
+        - $ref: '#/components/parameters/query_date_from'
+        - $ref: '#/components/parameters/query_date_to'
       responses:
         '200':
           description: Successful operation
@@ -70,9 +69,7 @@ paths:
                 type: object
                 properties:
                   data:
-                    type: array
-                    items:
-                      $ref:  '#/components/schemas/TApiTest'
+                    $ref:  '#/components/schemas/TSpotPriceSummary'
                   _paging:
                     $ref: '#/components/schemas/Pagination'
         
@@ -80,56 +77,29 @@ paths:
           $ref: '#/components/responses/ValidationFailure'
         '404':
           $ref: '#/components/responses/NotFound'
-        '401':
-          $ref: '#/components/responses/AuthorizationFailure'
-        '403':
-          $ref: '#/components/responses/AccessForbiddenFailure'
-        '500':
-          description: unexpected internal error occured
-    post:
-      x-eov-operation-handler: apitest/route.apitest
-      operationId: postTest
-      tags:
-        - private
-        - test
-      description: post a new test
-      requestBody:
-        $ref: '#/components/requestBodies/PostTest'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/TApiTest'
-        
-        '400':
-          $ref: '#/components/responses/ValidationFailure'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '403':
-          $ref: '#/components/responses/AuthorizationFailure'
         '500':
           description: unexpected internal error occured
 
 components:
   parameters:
           
-    queryUuidNotRequired:
-      name: ids
+    query_date_from:
+      name: date_from
       in: query
-      required: false
+      required: true
       schema:
-        type: array
-        minLength: 1
-        items:
-          type: string
-          format: uuid
+        type: string
+        format: date-time
+        example: '2024-03-01T08:09:22.146Z'
+
+    query_date_to:
+      name: date_to
+      in: query
+      required: true
+      schema:
+        type: string
+        format: date-time
+        example: '2024-05-29T08:09:22.146Z'
     
     pagination_index:
       name: pagination_index
@@ -184,46 +154,60 @@ components:
           type: string
           example: 'Service error occured'
 
-    TApiTest:
-      allOf:
-        - type: object
-          properties:
-            uuid:
-              type: string
-              format: uuid
-              example: 'uuid'
-            created_at:
-              type: string
-              format: date-time
-              example: 'timestamp'
-          required:
-            - uuid
-            - created_at
-        - $ref: '#/components/schemas/TCreateApiTest'
-          
-    TCreateApiTest:
+    TSpotPriceMeta:
       type: object
       properties:
-        name:
+        price_unit:
           type: string
-          example: 'name'
-        description:
-          type: string
-          example: 'description'
+          example: 'c/Kwh'
+        tax:
+          type: number
+          example: 25
       required:
-        - name
-        - description
+        - price_unit
+        - tax
 
-  requestBodies:
-    PostTest:
-      description: create a new test
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/TCreateApiTest'
-      
+    TSpotPrice:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          example: 'timestamp'
+        price:
+          type: string
+          example: '12.16'
+        price_with_tax:
+          type: string
+          example: '15.20'
+      required:
+        - timestamp
+        - price
+        - price_with_tax
+
+    TSpotPriceSummary:
+      type: object
+      properties:
+        from: 
+          type: string
+          format: date-time
+          example: 'timestamp'
+        to: 
+          type: string
+          format: date-time
+          example: 'timestamp'
+        meta:
+          $ref: '#/components/schemas/TSpotPriceMeta'
+        prices: 
+          type: array
+          items:
+            $ref: '#/components/schemas/TSpotPrice'
+      required:
+        - meta
+        - prices
+        - from
+        - to
+
   responses:
         NotFound:
           description: API endpoint not found
@@ -243,28 +227,7 @@ components:
                     $ref: '#/components/schemas/ErrorList'
                   example:
                       - errors:
-                          error: "item does not exist"
-
-        AccessForbiddenFailure:
-          description: Request failed because of insufficient access rights
-          content:
-                application/json:
-                  schema:
-                    $ref: '#/components/schemas/ErrorList'
-                  example:
-                    - errors:
-                        error: "Invalid token provided"
-
-        AuthorizationFailure:
-          description: Request failed with non valid authentication data provided
-          content:
-                application/json:
-                  schema:
-                    $ref: '#/components/schemas/ErrorList'
-                  example:
-                    - errors:
-                        error: "Invalid token provided"
-                        
+                          error: "item does not exist"                        
   
   securitySchemes:
     bearerAuth:            # arbitrary name for the security scheme

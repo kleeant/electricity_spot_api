@@ -20,6 +20,18 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "updatePrices",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/nodemon/bin/nodemon.js",
+      "program": "${workspaceFolder}/src/infrastructure/cli/cli.updateSpotPrices.ts",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+          "debug": "app:*",
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Jest debug test",
       "program": "${workspaceFolder}/node_modules/jest/bin/jest",
       "args": [
