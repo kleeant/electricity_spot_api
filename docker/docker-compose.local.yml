@@ -26,8 +26,9 @@ services:
       - spot_api_data:/var/lib/spot_api
     networks:
       - kleeant_network
+    restart: always
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://api:9090/readiness"]
+      test: ["CMD", "curl", "-f", "http://api:9090/healthcheck"]
       timeout: 20s
       retries: 10
   
@@ -49,9 +50,10 @@ services:
     networks:
       - kleeant_network
     healthcheck:
-      test: ["CMD", "pg_isready" ,"ping", "-h", "localhost"]
-      timeout: 20s
-      retries: 10
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_db-data:
