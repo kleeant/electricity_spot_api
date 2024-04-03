@@ -5,11 +5,15 @@ import fs from 'fs'
 export const parseFileName = (filename: string): { fileName: string, path: string } => {
   const separator = path.sep
   const pathParts = filename.split(separator)
-  const fileName = (pathParts.pop() ?? '').replace('.ts', '')
-  const filePath = pathParts.join(separator)
+  const fileName = pathParts.pop()
+  const fileNameParts = (fileName as string).split('.')
+  if (fileNameParts.length > 1) {
+    fileNameParts.pop()
+  }
+  const withoutExtension = (fileNameParts).join('.')
   return {
-    fileName,
-    path: filePath
+    fileName: withoutExtension,
+    path: pathParts.join(separator)
   }
 }
 

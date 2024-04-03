@@ -1,2 +1,2 @@
-import { knexConfig } from './src/infrastructure/database/knex/knex.config'
+import { knexConfig } from './src/infrastructure/database/knex.config'
 export default knexConfig

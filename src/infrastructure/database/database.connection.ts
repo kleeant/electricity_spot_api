@@ -1,5 +1,5 @@
 import knex, { Knex } from 'knex'
-import { knexConfig, defaultKnexCOnfig } from './knex/knex.config'
+import { knexConfig, defaultKnexCOnfig } from './knex.config'
 import configDotenv from '../config/config.dotenv'
 import { createDatabaseQ, dropDatabaseQ, databaseExistsQ } from './queries/queries.system'
 import loggerService from '../../lib/logger'
