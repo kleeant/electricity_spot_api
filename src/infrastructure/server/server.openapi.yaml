@@ -17,7 +17,7 @@ tags:
 paths:
   /healthcheck:
     get:
-      x-eov-operation-handler: healthcheck/route.healthCheck
+      x-eov-operation-handler: healthCheck/route.healthCheck
       operationId: getHealthCheck
       tags:
         - public
