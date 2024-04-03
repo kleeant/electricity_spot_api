@@ -1,12 +1,11 @@
 FROM node:18.20.0-slim
 
 WORKDIR /usr/src/app
-COPY package.json ./
-COPY package-lock.json ./
+COPY package*.json ./
 RUN npm install
 COPY . .
-
+RUN npm run build
 EXPOSE 8080
 
-CMD ["npm", "run", "build"]
-CMD ["npm", "run", "start"]
+ENTRYPOINT ["npm"]
+CMD ["run", "start"]

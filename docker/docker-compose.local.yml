@@ -1,9 +1,40 @@
 version: "3.7"
 
 services:
-  postgres-db:
+  api:
+    container_name: spot_api
+    build: ../.
+    ports:
+        - "${API_PORT}:9090"
+    depends_on:
+      - postgres_db
+    links:
+      - postgres_db
+    environment:
+      - NODE_ENV=production
+      - AXIOS_ENABLE_CURLS=${AXIOS_ENABLE_CURLS}
+      - ENTSOE_API_TOKEN=${ENTSOE_API_TOKEN}
+      - ENTSOE_API_URL=${ENTSOE_API_URL}
+      - ENTSOE_FIN_DOMAIN=${ENTSOE_FIN_DOMAIN}
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_HOST=postgres_db
+      - DB_PORT=5432
+      - API_PORT=9090
+    volumes:
+      - spot_api_data:/var/lib/spot_api
+    networks:
+      - kleeant_network
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://api:9090/healthcheck"]
+      timeout: 20s
+      retries: 10
+  
+  postgres_db:
     command: ["postgres", "-c", "log_statement=all"]
-    hostname: postgres-db
+    hostname: postgres_db
     container_name: postgres_db
     image: postgres:14-bullseye
     restart: always
@@ -15,16 +46,18 @@ services:
     ports:
       - "${DB_PORT}:5432"
     volumes:
-      - postgres-db-data:/var/lib/postgres
+      - postgres_db-data:/var/lib/postgres
     networks:
       - kleeant_network
     healthcheck:
-      test: ["CMD", "pg_isready" ,"ping", "-h", "localhost"]
-      timeout: 20s
-      retries: 10
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
-  postgres-db-data:
+  postgres_db-data:
+  spot_api_data:
 
 networks:
   kleeant_network:

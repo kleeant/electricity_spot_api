@@ -110,5 +110,10 @@ describe('repository.spotPrice::int', () => {
       const res = await repositorySpotPrice.getHighestAndLowestPriceInRange(new Date('2024-02-24T21:00:01.000Z'), new Date('2024-02-24T23:00:00.000Z'))
       expect(res.lowest_price_in_range).toStrictEqual(new Decimal(2))
     })
+    it('should work even tough db has no data', async () => {
+      const res = await repositorySpotPrice.getHighestAndLowestPriceInRange(new Date('2024-02-24T21:00:00.000Z'), new Date('2024-02-24T22:00:00.000Z'))
+      expect(res.highest_price_in_range).toStrictEqual(new Decimal(0))
+      expect(res.lowest_price_in_range).toStrictEqual(new Decimal(0))
+    })
   })
 })

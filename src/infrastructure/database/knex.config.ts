@@ -1,14 +1,15 @@
-import config from '../../config/config.dotenv'
+import config from '../config/config.dotenv'
 import type { Knex } from 'knex'
+import path from 'path'
 
 const migrations: Knex.MigratorConfig = {
-  directory: './src/infrastructure/database/migrations',
-  stub: './src/infrastructure/database/knex/knex.migrationStub.ts',
+  directory: path.join(__dirname, 'migrations'),
+  stub: path.join(__dirname, 'knex.migrationStub.ts'),
   extension: 'ts'
 }
 
 const seeds: Knex.SeederConfig = {
-  directory: './src/infrastructure/database/seeds',
+  directory: path.join(__dirname, 'seeds'),
   extension: 'ts',
   timestampFilenamePrefix: true
 }
