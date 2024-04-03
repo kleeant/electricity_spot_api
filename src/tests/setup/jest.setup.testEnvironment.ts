@@ -16,6 +16,7 @@ class CustomEnvironment extends Environment {
     await super.setup()
     const schema = schemaNameGenerator.getSchemaNamesFromTestFileName(this.testPath)
     this.global.process.env.DB_DATABASE = schema
+    this.global.process.env.ENTSOE_API_TOKEN = 'mock-token'
   }
 }
 export default CustomEnvironment
