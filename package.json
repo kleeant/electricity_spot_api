@@ -54,6 +54,7 @@
     "make:seed": "npx knex seed:make",
     "test": "jest",
     "test:unit": "npm run test -- --testPathPattern=unit",
+    "test:ci": "npm run test:unit",
     "test:all": "npm run docker:local:up && npm run test",
     "types:delete": "rimraf src/lib/types/generated.d.ts",
     "types:generate": "npm run types:delete && npx openapi-typescript ./src/infrastructure/server/server.openapi.yaml -o ./src/lib/types/generated.d.ts && npm run lint -- ./src/lib/types/generated.d.ts",
