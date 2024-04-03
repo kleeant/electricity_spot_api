@@ -7,7 +7,9 @@ services:
     ports:
         - "${API_PORT}:9090"
     depends_on:
-            - postgres-db
+      - postgres_db
+    links:
+      - postgres_db
     environment:
       - NODE_ENV=production
       - AXIOS_ENABLE_CURLS=${AXIOS_ENABLE_CURLS}
@@ -17,20 +19,21 @@ services:
       - DB_DATABASE=${DB_DATABASE}
       - DB_USER=${DB_USER}
       - DB_PASS=${DB_PASS}
-      - DB_HOST=postgres-db
+      - DB_HOST=postgres_db
       - DB_PORT=5432
       - API_PORT=9090
     volumes:
-      - spot_api-data:/var/lib/spot_api
+      - spot_api_data:/var/lib/spot_api
     networks:
       - kleeant_network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://api:9090/readiness"]
       timeout: 20s
       retries: 10
-  postgres-db:
+  
+  postgres_db:
     command: ["postgres", "-c", "log_statement=all"]
-    hostname: postgres-db
+    hostname: postgres_db
     container_name: postgres_db
     image: postgres:14-bullseye
     restart: always
@@ -42,7 +45,7 @@ services:
     ports:
       - "${DB_PORT}:5432"
     volumes:
-      - postgres-db-data:/var/lib/postgres
+      - postgres_db-data:/var/lib/postgres
     networks:
       - kleeant_network
     healthcheck:
@@ -51,8 +54,8 @@ services:
       retries: 10
 
 volumes:
-  postgres-db-data:
-  spot_api-data:
+  postgres_db-data:
+  spot_api_data:
 
 networks:
   kleeant_network:
