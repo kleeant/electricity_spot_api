@@ -1,4 +1,4 @@
-import { firstDateIsNewer, removeDays, addDays, addHours } from '../util.date'
+import { firstDateIsNewer, removeDays, addDays, addHours, removeHours } from '../util.date'
 
 describe('util.date::unit', () => {
   describe('#firstDateIsNewer', () => {
@@ -38,6 +38,14 @@ describe('util.date::unit', () => {
     it('should return date for next hour', async () => {
       const expectedStr = '2024-04-02T08:24:11.006Z'
       const result = addHours(1, new Date('2024-04-02T07:24:11.006Z'))
+      const resultString = result.toISOString()
+      expect(resultString).toStrictEqual(expectedStr)
+    })
+  })
+  describe('#removeHours', () => {
+    it('should return date for previous hour', async () => {
+      const expectedStr = '2024-04-02T06:24:11.006Z'
+      const result = removeHours(1, new Date('2024-04-02T07:24:11.006Z'))
       const resultString = result.toISOString()
       expect(resultString).toStrictEqual(expectedStr)
     })

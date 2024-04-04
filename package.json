@@ -52,6 +52,7 @@
     "docker:db:up": "npm run docker:local:up -- postgres_db",
     "make:migration": "npx knex migrate:make",
     "make:seed": "npx knex seed:make",
+    "db:seed": "npx knex seed:run",
     "test": "jest",
     "test:unit": "npm run test -- --testPathPattern=unit",
     "test:ci": "npm run test:unit",
