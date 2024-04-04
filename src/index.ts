@@ -2,9 +2,11 @@ import server from './infrastructure/server/server.express'
 import config from './infrastructure/config/config.dotenv'
 import databaseConnection from './infrastructure/database/database.connection'
 import loggerService from './lib/logger'
+import { SpotPriceService } from './core/spotPrice/service.spotPrice'
 const run = async (): Promise<void> => {
   try {
     await databaseConnection.ensureLatestDatabase()
+    await new SpotPriceService().updatePrices()
     const app = server()
     app.listen(config.API_PORT, () => {
       loggerService.info(`API listening on port ${config.API_PORT}`)
