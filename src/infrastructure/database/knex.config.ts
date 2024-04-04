@@ -16,7 +16,7 @@ const seeds: Knex.SeederConfig = {
 
 export const knexConfig: Knex.Config = {
   client: 'pg',
-  pool: { min: 3, max: 10, acquireTimeoutMillis: 100 },
+  pool: { min: config.DB_MIN_CONNECTIONS, max: config.DB_MAX_CONNECTIONS, acquireTimeoutMillis: 100 },
   asyncStackTraces: true,
   connection: {
     host: config.DB_HOST,

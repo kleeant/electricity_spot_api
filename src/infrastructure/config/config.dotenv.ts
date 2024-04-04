@@ -12,6 +12,8 @@ interface Config {
   DB_PASS: string
   DB_DATABASE: string
   DB_DEFAULT_DATABASE: string
+  DB_MAX_CONNECTIONS: number
+  DB_MIN_CONNECTIONS: number
   API_PORT: number
   ENTSOE_API_TOKEN: string
   ENTSOE_API_URL: string
@@ -30,6 +32,8 @@ const makeData = (): Config => {
     DB_PASS: process.env.DB_PASS,
     DB_DEFAULT_DATABASE: process.env.DB_DEFAULT_DATABASE || process.env.DB_USER,
     DB_DATABASE: process.env.DB_DATABASE,
+    DB_MAX_CONNECTIONS: parseInt(process.env.DB_MAX_CONNECTIONS || '6'),
+    DB_MIN_CONNECTIONS: parseInt(process.env.DB_MIN_CONNECTIONS || '3'),
     AXIOS_ENABLE_CURLS: process.env.AXIOS_ENABLE_CURLS === 'true',
     ENTSOE_API_TOKEN: process.env.ENTSOE_API_TOKEN,
     ENTSOE_API_URL: process.env.ENTSOE_API_URL || null,
