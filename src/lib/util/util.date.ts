@@ -15,3 +15,7 @@ export const addDays = (days: number, date: Date = new Date()): Date => {
 export const addHours = (hours: number, date: Date = new Date()): Date => {
   return datefns.addHours(date, hours)
 }
+
+export const removeHours = (hours: number, date: Date = new Date()): Date => {
+  return datefns.subHours(date, hours)
+}

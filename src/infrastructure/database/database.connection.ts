@@ -1,40 +1,44 @@
 import knex, { Knex } from 'knex'
-import { knexConfig, defaultKnexCOnfig } from './knex.config'
+import { knexConfig } from './knex.config'
 import configDotenv from '../config/config.dotenv'
 import { createDatabaseQ, dropDatabaseQ, databaseExistsQ } from './queries/queries.system'
 import loggerService from '../../lib/logger'
 
 class DatabaseConnection {
-  private connection?: Knex | null = null
-  private defaultConnection?: Knex | null = null
+  private readonly pool: Map<string, Knex> = new Map()
 
-  getConnection (): Knex {
-    if (this.connection == null) {
-      this.connection = knex(knexConfig)
+  getConnectionFromPool (database: string): Knex {
+    if (!this.pool.has(database)) {
+      this.pool.set(database, knex({ ...knexConfig, connection: { ...(knexConfig.connection as Knex.ConnectionConfig), database } }))
     }
-    return this.connection
+    return this.pool.get(database) as Knex
   }
 
-  getDefaultConnection (): Knex {
-    if (this.defaultConnection == null) {
-      this.defaultConnection = knex(defaultKnexCOnfig)
+  async closeConnection (database: string): Promise<void> {
+    const conn = this.pool.get(database)
+    if (conn !== null && conn !== undefined) {
+      await conn.destroy()
+      this.pool.delete(database)
     }
-    return this.defaultConnection
-  }
-
-  async closeConnection (): Promise<void> {
-    (this.connection != null) && await this.connection.destroy()
-    this.connection = null
-  }
-
-  async closeDefaultConnection (): Promise<void> {
-    (this.defaultConnection != null) && await this.defaultConnection.destroy()
-    this.defaultConnection = null
   }
 
   async closeAllConnections (): Promise<void> {
-    await this.closeConnection()
-    await this.closeDefaultConnection()
+    for (const conn of this.pool.values()) {
+      await this.closeConnection(conn.client.config.connection.database as string)
+    }
+  }
+
+  getConnection (): Knex {
+    return this.getConnectionFromPool(configDotenv.DB_DATABASE)
+  }
+
+  /**
+   * required for creating new schemas.
+   * postgre creates a default database with the same name as the user
+   * but this can be overwritten in dotenv
+   */
+  getDefaultConnection (): Knex {
+    return this.getConnectionFromPool(configDotenv.DB_DEFAULT_DATABASE)
   }
 
   async resetDatabase (): Promise<void> {
@@ -60,7 +64,7 @@ class DatabaseConnection {
   async dropDatabase (): Promise<void> {
     const defaultConnection = this.getDefaultConnection()
     await this.runQuery(dropDatabaseQ, { name: configDotenv.DB_DATABASE }, defaultConnection)
-    await this.closeConnection()
+    await this.closeConnection(configDotenv.DB_DATABASE)
   }
 
   async toLatestMigration (): Promise<void> {

@@ -21,5 +21,10 @@ you can run both the api and database in docker using
 commits follow conventional commit form and are checked for proper format.
 how to commit https://www.conventionalcommits.org/en/v1.0.0/
 
+## seeds
+you need to either start the api once or create the database with the same name as in your .env.
+After that run
+- npm run db:seed
+
 ## how to update prices
 - npm run run:update:prices
