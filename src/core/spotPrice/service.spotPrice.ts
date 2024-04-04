@@ -29,6 +29,11 @@ export class SpotPriceService {
       : util.date.removeDays(7, new Date())
     const tomorrow = util.date.addDays(1, new Date())
 
+    if (util.date.firstDateIsNewer(latestTimestamp, tomorrow)) {
+      loggerService.info(`No new data available from ENTSOE API. Latest timestamp in DB: [${latestTimestamp.toISOString()}], timestamp for tomorrow: [${tomorrow.toISOString()}]`)
+      return
+    }
+
     const externalResult = await this.dataSource.getDayAheadPrices(latestTimestamp, tomorrow)
     const parsedPrices = this.serviceExternalPriceParser.parseSpotPrices(externalResult)
     const pricesToSave = dbHasData

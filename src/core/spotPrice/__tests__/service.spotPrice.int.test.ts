@@ -68,5 +68,12 @@ describe('service.spotPrice::int', () => {
       const db = await databaseConnection.runQuery('SELECT * FROM spot_price')
       expect(db.length).toBe(46)
     })
+    it('it should not call entose API if tomorrows timestamp is older than latest in database', async () => {
+      (mock.getDayAheadPrices as jest.Mock).mockClear()
+      const dbTimestamp = util.date.addDays(3, new Date())
+      await databaseConnection.runQuery('INSERT INTO spot_price (timestamp, price) VALUES (?, ?)', [dbTimestamp, '12.34'])
+      await service.updatePrices()
+      expect(mock.getDayAheadPrices).not.toHaveBeenCalled()
+    })
   })
 })
