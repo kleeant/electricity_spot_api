@@ -10,10 +10,9 @@ const run = async (): Promise<void> => {
       loggerService.info(`API listening on port ${config.API_PORT}`)
       loggerService.info(`API docs at http://localhost:${config.API_PORT}/openapi/ui/`)
     })
-  }catch(e) {
+  } catch (e) {
     loggerService.error(e as Error)
   }
-  
 }
 
 void run()

@@ -25,7 +25,7 @@ const makeData = (): Config => {
   const data: any = {
     NODE_ENV: process.env.NODE_ENV,
     DB_HOST: process.env.DB_HOST,
-    DB_PORT: process.env.DB_PORT,
+    DB_PORT: process.env.DB_PORT || 8080,
     DB_USER: process.env.DB_USER,
     DB_PASS: process.env.DB_PASS,
     DB_DEFAULT_DATABASE: process.env.DB_DEFAULT_DATABASE || process.env.DB_USER,
